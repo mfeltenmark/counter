@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dagräknare</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Dagräknare</h1>
+        <p class="subtitle">Räkna dagar från ett specifikt datum</p>
+
+        <div class="input-section">
+            <label for="start-date">Välj startdatum:</label>
+            <input type="date" id="start-date" required>
+            <button id="calculate-btn">Beräkna</button>
+        </div>
+
+        <div class="result-section" id="result-section">
+            <div class="result-card">
+                <div class="days-count" id="days-count">0</div>
+                <div class="days-label">dagar</div>
+            </div>
+            <div class="date-info">
+                <p><strong>Från:</strong> <span id="from-date">-</span></p>
+                <p><strong>Till:</strong> <span id="to-date">-</span></p>
+            </div>
+        </div>
+
+        <div class="saved-counters" id="saved-counters">
+            <h2>Sparade räknare</h2>
+            <div id="counters-list"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
