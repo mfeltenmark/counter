@@ -15,17 +15,27 @@ const MILESTONES = [
     { days: 7, message: 'En hel vecka! Grattis! 🎉' },
     { days: 14, message: 'Två veckor! Otroligt bra jobbat! ✨' },
     { days: 21, message: 'Tre veckor! Vilken uthållighet! 🎯' },
+    { days: 28, message: 'Fyra veckor! Fortsätt så! 💫' },
     { days: 30, message: 'En månad! Du är en stjärna! 🌟🎊' },
-    { days: 60, message: 'Två månader! Fortsätt så! 🎯💫' },
-    { days: 90, message: 'Tre månader! Helt fantastiskt! 🏆' },
-    { days: 120, message: 'Fyra månader! Du är oslagbar! 💎' },
-    { days: 150, message: 'Fem månader! Vilken prestation! 🌈' },
-    { days: 180, message: 'Ett halvår! Du är otrolig! 🎆' },
-    { days: 270, message: 'Nio månader! Imponerande! 🌟' },
-    { days: 365, message: 'ETT ÅR! Du är en inspiration! 🎉🏆🌟' },
-    { days: 500, message: '500 dagar! Legendariskt! 👑' },
-    { days: 730, message: 'TVÅ ÅR! Helt makalöst! 🎊🎆🏆' },
-    { days: 1000, message: '1000 dagar! Du är en sann hjälte! 🦸' }
+    { days: 35, message: 'Fem veckor! Du är fantastisk! 🌈' },
+    { days: 42, message: 'Sex veckor! Vilken styrka! 💪' },
+    { days: 49, message: 'Sju veckor! Du är oslagbar! 🔥' },
+    { days: 56, message: 'Åtta veckor! Helt otroligt! ⭐' },
+    { days: 60, message: 'Två månader! Fantastiskt jobbat! 🎯💫' },
+    { days: 63, message: 'Nio veckor! Du gör det! 🌟' },
+    { days: 70, message: 'Tio veckor! Så stolt! 🏆' },
+    { days: 77, message: 'Elva veckor! Briljant! 💎' },
+    { days: 84, message: 'Tolv veckor! Tre månader snart! 🎊' },
+    { days: 90, message: 'Tre månader! Ett kvartal klart! 🏆🎉' },
+    { days: 120, message: 'Fyra månader! Du är oslagbar! 💎✨' },
+    { days: 150, message: 'Fem månader! Vilken prestation! 🌈🎯' },
+    { days: 180, message: 'Ett halvår! Du är otrolig! 🎆🏆' },
+    { days: 270, message: 'Nio månader! Tre kvartal! Imponerande! 🌟👑' },
+    { days: 365, message: 'ETT ÅR! Du är en inspiration! 🎉🏆🌟👑' },
+    { days: 500, message: '500 dagar! Legendariskt! 👑💫' },
+    { days: 730, message: 'TVÅ ÅR! Helt makalöst! 🎊🎆🏆🌟' },
+    { days: 1000, message: '1000 dagar! Du är en sann hjälte! 🦸✨' },
+    { days: 1095, message: 'TRE ÅR! Otroligt! 🎉🏆👑💎' }
 ];
 
 
@@ -92,6 +102,18 @@ function calculateDays(startDate, endDate = new Date()) {
     return diffDays;
 }
 
+// Calculate time breakdown (weeks, months, years)
+function calculateTimeBreakdown(days) {
+    const years = Math.floor(days / 365);
+    const remainingAfterYears = days % 365;
+    const months = Math.floor(remainingAfterYears / 30);
+    const remainingAfterMonths = remainingAfterYears % 30;
+    const weeks = Math.floor(remainingAfterMonths / 7);
+    const remainingDays = remainingAfterMonths % 7;
+
+    return { years, months, weeks, days: remainingDays, totalWeeks: Math.floor(days / 7) };
+}
+
 // Format date for display
 function formatDate(dateString) {
     const date = new Date(dateString);
@@ -106,10 +128,44 @@ function formatDate(dateString) {
 function displayResult() {
     const days = calculateDays(SOBRIETY_START_DATE);
     const todayDate = new Date();
+    const breakdown = calculateTimeBreakdown(days);
 
     daysCount.textContent = days;
     fromDate.textContent = formatDate(SOBRIETY_START_DATE);
     toDate.textContent = formatDate(todayDate.toISOString().split('T')[0]);
+
+    // Build breakdown text
+    let breakdownParts = [];
+    if (breakdown.years > 0) {
+        breakdownParts.push(`${breakdown.years} ${breakdown.years === 1 ? 'år' : 'år'}`);
+    }
+    if (breakdown.months > 0) {
+        breakdownParts.push(`${breakdown.months} ${breakdown.months === 1 ? 'månad' : 'månader'}`);
+    }
+    if (breakdown.weeks > 0) {
+        breakdownParts.push(`${breakdown.weeks} ${breakdown.weeks === 1 ? 'vecka' : 'veckor'}`);
+    }
+    if (breakdown.days > 0 || breakdownParts.length === 0) {
+        breakdownParts.push(`${breakdown.days} ${breakdown.days === 1 ? 'dag' : 'dagar'}`);
+    }
+
+    // Show breakdown
+    const breakdownText = breakdownParts.join(', ');
+    const totalWeeksText = `(${breakdown.totalWeeks} ${breakdown.totalWeeks === 1 ? 'vecka' : 'veckor'} totalt)`;
+
+    // Create or update breakdown display
+    let breakdownDiv = document.getElementById('time-breakdown');
+    if (!breakdownDiv) {
+        breakdownDiv = document.createElement('div');
+        breakdownDiv.id = 'time-breakdown';
+        breakdownDiv.className = 'time-breakdown';
+        document.querySelector('.date-info').appendChild(breakdownDiv);
+    }
+    breakdownDiv.innerHTML = `
+        <div class="breakdown-title">Det är:</div>
+        <div class="breakdown-text">${breakdownText}</div>
+        <div class="breakdown-weeks">${totalWeeksText}</div>
+    `;
 
     // Show milestone info
     const milestone = checkMilestone(days);
