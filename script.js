@@ -212,6 +212,13 @@ startDateInput.addEventListener('keypress', (e) => {
 // Initial render of saved counters
 renderSavedCounters();
 
+// Auto-load the most recent counter on page load
+if (savedCounters.length > 0) {
+    const mostRecentCounter = savedCounters[savedCounters.length - 1];
+    startDateInput.value = mostRecentCounter.date;
+    displayResult(mostRecentCounter.date, false); // false = don't show milestone modal on page load
+}
+
 // Update saved counters every minute to keep the day count current
 setInterval(() => {
     renderSavedCounters();
