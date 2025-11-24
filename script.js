@@ -42,7 +42,7 @@ function displayResult(startDate) {
     fromDate.textContent = formatDate(startDate);
     toDate.textContent = formatDate(todayDate.toISOString().split('T')[0]);
 
-    resultSection.classList.add('active');
+    resultSection.classList.remove('hidden');
 
     // Scroll to result
     resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -74,20 +74,36 @@ function deleteCounter(id) {
 // Render saved counters
 function renderSavedCounters() {
     if (savedCounters.length === 0) {
-        countersList.innerHTML = '<p style="color: #999; text-align: center;">Inga sparade räknare ännu</p>';
+        countersList.innerHTML = '<p class="text-gray-400 text-center font-mono text-sm">// Inga sparade räknare ännu</p>';
         return;
     }
 
     countersList.innerHTML = savedCounters.map(counter => {
         const days = calculateDays(counter.date);
         return `
-            <div class="counter-item">
-                <div class="counter-info">
-                    <div class="counter-name">${counter.name}</div>
-                    <div class="counter-days">${days} dagar</div>
-                    <div class="counter-date">Från: ${formatDate(counter.date)}</div>
+            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-6 hover:border-tech-purple transition-colors card-glow group">
+                <div class="flex justify-between items-center">
+                    <div class="flex-1">
+                        <div class="text-xl font-semibold text-white mb-2 group-hover:text-tech-cyan transition-colors">
+                            ${counter.name}
+                        </div>
+                        <div class="text-3xl font-bold mb-2">
+                            <span class="bg-gradient-to-r from-neural-green to-tech-cyan bg-clip-text text-transparent">
+                                ${days}
+                            </span>
+                            <span class="text-gray-400 text-lg ml-2">dagar</span>
+                        </div>
+                        <div class="text-sm font-mono text-gray-400">
+                            <span class="text-tech-cyan">start_date:</span> ${formatDate(counter.date)}
+                        </div>
+                    </div>
+                    <button
+                        class="bg-gradient-to-r from-red-500 to-ai-orange text-white px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-transform ml-4"
+                        onclick="deleteCounter(${counter.id})"
+                    >
+                        Ta bort
+                    </button>
                 </div>
-                <button class="delete-btn" onclick="deleteCounter(${counter.id})">Ta bort</button>
             </div>
         `;
     }).join('');
