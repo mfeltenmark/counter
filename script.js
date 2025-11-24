@@ -6,7 +6,7 @@ const toDate = document.getElementById('to-date');
 const milestoneInfo = document.getElementById('milestone-info');
 
 // HÅRDKODAT STARTDATUM - Din nykterhet började här! 🌟
-const SOBRIETY_START_DATE = '2024-10-23';
+const SOBRIETY_START_DATE = '2025-10-23';
 
 // Milestones configuration (in days)
 const MILESTONES = [
