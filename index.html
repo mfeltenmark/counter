@@ -11,27 +11,16 @@
         <h1>💪 Min Nykterhet</h1>
         <p class="subtitle">Varje dag är en seger värd att fira</p>
 
-        <div class="input-section">
-            <label for="start-date">När drack du alkohol senast?</label>
-            <input type="date" id="start-date" required>
-            <button id="calculate-btn">Starta min resa</button>
-        </div>
-
-        <div class="result-section" id="result-section">
+        <div class="result-section active" id="result-section">
             <div class="result-card">
                 <div class="days-count" id="days-count">0</div>
-                <div class="days-label">dagar</div>
+                <div class="days-label">dagar nykter</div>
             </div>
             <div class="date-info">
-                <p><strong>Från:</strong> <span id="from-date">-</span></p>
-                <p><strong>Till:</strong> <span id="to-date">-</span></p>
+                <p><strong>Nykter sedan:</strong> <span id="from-date">-</span></p>
+                <p><strong>Idag:</strong> <span id="to-date">-</span></p>
             </div>
-        </div>
-
-        <div class="saved-counters" id="saved-counters">
-            <h2>Din Resa</h2>
-            <p class="journey-subtitle">Kom ihåg hur långt du kommit 🌟</p>
-            <div id="counters-list"></div>
+            <div id="milestone-info" class="milestone-info-container"></div>
         </div>
     </div>
 

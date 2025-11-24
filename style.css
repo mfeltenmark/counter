@@ -37,52 +37,6 @@ h1 {
     font-size: 1.1em;
 }
 
-.input-section {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-label {
-    font-weight: 600;
-    color: #333;
-    font-size: 1.1em;
-}
-
-input[type="date"] {
-    padding: 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 1em;
-    transition: border-color 0.3s;
-}
-
-input[type="date"]:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-button {
-    padding: 15px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-}
-
-button:active {
-    transform: translateY(0);
-}
 
 .result-section {
     display: none;
@@ -126,72 +80,11 @@ button:active {
     color: #333;
 }
 
-.saved-counters {
-    margin-top: 40px;
-    padding-top: 30px;
-    border-top: 2px solid #e0e0e0;
-}
-
-.saved-counters h2 {
-    color: #333;
-    margin-bottom: 10px;
-    font-size: 1.5em;
-}
-
-.journey-subtitle {
-    color: #666;
-    font-size: 1em;
-    margin-bottom: 20px;
+.milestone-info-container {
+    margin-top: 20px;
     text-align: center;
 }
 
-#counters-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.counter-item {
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 2px solid #e0e0e0;
-}
-
-.counter-info {
-    flex: 1;
-}
-
-.counter-name {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.counter-days {
-    color: #667eea;
-    font-size: 1.3em;
-    font-weight: bold;
-}
-
-.counter-date {
-    color: #666;
-    font-size: 0.9em;
-}
-
-.delete-btn {
-    padding: 8px 15px;
-    background: #ff4757;
-    font-size: 0.9em;
-    margin-left: 10px;
-}
-
-.delete-btn:hover {
-    background: #ff3838;
-}
 
 /* Confetti animation */
 .confetti-container {
@@ -297,18 +190,35 @@ button:active {
     margin-top: 20px;
     padding: 15px 40px;
     font-size: 1.2em;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.celebration-content button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.celebration-content button:active {
+    transform: translateY(0);
 }
 
 /* Milestone badges */
 .milestone-badge {
-    margin-top: 10px;
-    padding: 8px 12px;
+    margin-top: 8px;
+    padding: 15px 20px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    border-radius: 20px;
-    font-size: 0.9em;
+    border-radius: 15px;
+    font-size: 1.2em;
     font-weight: 600;
     animation: pulse 2s infinite;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 @keyframes pulse {
@@ -323,13 +233,11 @@ button:active {
 .next-milestone {
     margin-top: 8px;
     color: #667eea;
-    font-size: 0.9em;
-    font-weight: 500;
-}
-
-.counter-item.milestone-active {
-    border: 3px solid #667eea;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    font-size: 1.2em;
+    font-weight: 600;
+    padding: 15px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 10px;
 }
 
 @media (max-width: 600px) {
