@@ -208,7 +208,7 @@ function displayResult() {
         milestoneInfo.innerHTML = `<div class="milestone-badge">🎉 Milestone! ${milestone.message}</div>`;
     } else if (nextMilestone) {
         const daysToGo = nextMilestone.days - days;
-        milestoneInfo.innerHTML = `<div class="next-milestone">Next milestone in ${daysToGo} ${daysToGo === 1 ? 'day' : 'days'}</div>`;
+        milestoneInfo.innerHTML = `<div class="next-milestone">Next milestone in ${daysToGo} ${daysToGo === 1 ? 'day' : 'days'}: <strong>${nextMilestone.title}</strong></div>`;
     }
 
     // Display achievements
