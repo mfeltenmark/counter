@@ -1,26 +1,32 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Min Nykterhet - Varje dag räknas</title>
+    <title>My Sobriety - Every Day Counts</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>💪 Min Nykterhet</h1>
-        <p class="subtitle">Varje dag är en seger värd att fira</p>
+        <h1>💪 My Sobriety Journey</h1>
+        <p class="subtitle">Every day is a victory worth celebrating</p>
 
         <div class="result-section active" id="result-section">
             <div class="result-card">
                 <div class="days-count" id="days-count">0</div>
-                <div class="days-label">dagar nykter</div>
+                <div class="days-label">days sober</div>
             </div>
             <div class="date-info">
-                <p><strong>Nykter sedan:</strong> <span id="from-date">-</span></p>
-                <p><strong>Idag:</strong> <span id="to-date">-</span></p>
+                <p><strong>Sober since:</strong> <span id="from-date">-</span></p>
+                <p><strong>Today:</strong> <span id="to-date">-</span></p>
             </div>
             <div id="milestone-info" class="milestone-info-container"></div>
+        </div>
+
+        <div class="achievements-section">
+            <h2>🏆 Achievements Unlocked</h2>
+            <p class="achievements-subtitle">Celebrate every milestone you've reached!</p>
+            <div id="achievements-list" class="achievements-list"></div>
         </div>
     </div>
 

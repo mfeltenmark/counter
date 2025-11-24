@@ -4,38 +4,39 @@ const daysCount = document.getElementById('days-count');
 const fromDate = document.getElementById('from-date');
 const toDate = document.getElementById('to-date');
 const milestoneInfo = document.getElementById('milestone-info');
+const achievementsContainer = document.getElementById('achievements-list');
 
-// HÅRDKODAT STARTDATUM - Din nykterhet började här! 🌟
+// HARDCODED START DATE - Your sobriety journey started here! 🌟
 const SOBRIETY_START_DATE = '2025-10-23';
 
 // Milestones configuration (in days)
 const MILESTONES = [
-    { days: 1, message: 'Fantastiskt! Din första dag är klar! 🌟' },
-    { days: 3, message: 'Tre dagar! Du är stark! 💪' },
-    { days: 7, message: 'En hel vecka! Grattis! 🎉' },
-    { days: 14, message: 'Två veckor! Otroligt bra jobbat! ✨' },
-    { days: 21, message: 'Tre veckor! Vilken uthållighet! 🎯' },
-    { days: 28, message: 'Fyra veckor! Fortsätt så! 💫' },
-    { days: 30, message: 'En månad! Du är en stjärna! 🌟🎊' },
-    { days: 35, message: 'Fem veckor! Du är fantastisk! 🌈' },
-    { days: 42, message: 'Sex veckor! Vilken styrka! 💪' },
-    { days: 49, message: 'Sju veckor! Du är oslagbar! 🔥' },
-    { days: 56, message: 'Åtta veckor! Helt otroligt! ⭐' },
-    { days: 60, message: 'Två månader! Fantastiskt jobbat! 🎯💫' },
-    { days: 63, message: 'Nio veckor! Du gör det! 🌟' },
-    { days: 70, message: 'Tio veckor! Så stolt! 🏆' },
-    { days: 77, message: 'Elva veckor! Briljant! 💎' },
-    { days: 84, message: 'Tolv veckor! Tre månader snart! 🎊' },
-    { days: 90, message: 'Tre månader! Ett kvartal klart! 🏆🎉' },
-    { days: 120, message: 'Fyra månader! Du är oslagbar! 💎✨' },
-    { days: 150, message: 'Fem månader! Vilken prestation! 🌈🎯' },
-    { days: 180, message: 'Ett halvår! Du är otrolig! 🎆🏆' },
-    { days: 270, message: 'Nio månader! Tre kvartal! Imponerande! 🌟👑' },
-    { days: 365, message: 'ETT ÅR! Du är en inspiration! 🎉🏆🌟👑' },
-    { days: 500, message: '500 dagar! Legendariskt! 👑💫' },
-    { days: 730, message: 'TVÅ ÅR! Helt makalöst! 🎊🎆🏆🌟' },
-    { days: 1000, message: '1000 dagar! Du är en sann hjälte! 🦸✨' },
-    { days: 1095, message: 'TRE ÅR! Otroligt! 🎉🏆👑💎' }
+    { days: 1, message: 'Amazing! Your first day is complete! 🌟', title: 'First Day' },
+    { days: 3, message: 'Three days! You are strong! 💪', title: '3 Days' },
+    { days: 7, message: 'One whole week! Congratulations! 🎉', title: '1 Week' },
+    { days: 14, message: 'Two weeks! Incredibly well done! ✨', title: '2 Weeks' },
+    { days: 21, message: 'Three weeks! What perseverance! 🎯', title: '3 Weeks' },
+    { days: 28, message: 'Four weeks! Keep it up! 💫', title: '4 Weeks' },
+    { days: 30, message: 'One month! You are a star! 🌟🎊', title: '1 Month' },
+    { days: 35, message: 'Five weeks! You are fantastic! 🌈', title: '5 Weeks' },
+    { days: 42, message: 'Six weeks! What strength! 💪', title: '6 Weeks' },
+    { days: 49, message: 'Seven weeks! You are unstoppable! 🔥', title: '7 Weeks' },
+    { days: 56, message: 'Eight weeks! Absolutely incredible! ⭐', title: '8 Weeks' },
+    { days: 60, message: 'Two months! Fantastically done! 🎯💫', title: '2 Months' },
+    { days: 63, message: 'Nine weeks! You are doing it! 🌟', title: '9 Weeks' },
+    { days: 70, message: 'Ten weeks! So proud! 🏆', title: '10 Weeks' },
+    { days: 77, message: 'Eleven weeks! Brilliant! 💎', title: '11 Weeks' },
+    { days: 84, message: 'Twelve weeks! Three months soon! 🎊', title: '12 Weeks' },
+    { days: 90, message: 'Three months! One quarter complete! 🏆🎉', title: '3 Months' },
+    { days: 120, message: 'Four months! You are unstoppable! 💎✨', title: '4 Months' },
+    { days: 150, message: 'Five months! What an achievement! 🌈🎯', title: '5 Months' },
+    { days: 180, message: 'Half a year! You are incredible! 🎆🏆', title: '6 Months' },
+    { days: 270, message: 'Nine months! Three quarters! Impressive! 🌟👑', title: '9 Months' },
+    { days: 365, message: 'ONE YEAR! You are an inspiration! 🎉🏆🌟👑', title: '1 Year' },
+    { days: 500, message: '500 days! Legendary! 👑💫', title: '500 Days' },
+    { days: 730, message: 'TWO YEARS! Absolutely amazing! 🎊🎆🏆🌟', title: '2 Years' },
+    { days: 1000, message: '1000 days! You are a true hero! 🦸✨', title: '1000 Days' },
+    { days: 1095, message: 'THREE YEARS! Incredible! 🎉🏆👑💎', title: '3 Years' }
 ];
 
 
@@ -80,10 +81,10 @@ function showCelebration(milestone, days) {
     modal.className = 'celebration-modal';
     modal.innerHTML = `
         <div class="celebration-content">
-            <h2>🎉 GRATTIS! 🎉</h2>
-            <div class="milestone-days">${days} ${days === 1 ? 'dag' : 'dagar'}</div>
+            <h2>🎉 CONGRATULATIONS! 🎉</h2>
+            <div class="milestone-days">${days} ${days === 1 ? 'day' : 'days'}</div>
             <p class="milestone-message">${milestone.message}</p>
-            <button onclick="this.parentElement.parentElement.remove()">Tack! ❤️</button>
+            <button onclick="this.parentElement.parentElement.remove()">Thank you! ❤️</button>
         </div>
     `;
     document.body.appendChild(modal);
@@ -114,10 +115,42 @@ function calculateTimeBreakdown(days) {
     return { years, months, weeks, days: remainingDays, totalWeeks: Math.floor(days / 7) };
 }
 
+// Get all achieved milestones
+function getAchievedMilestones(currentDays) {
+    return MILESTONES.filter(m => m.days <= currentDays).reverse();
+}
+
+// Display achievements history
+function displayAchievements(currentDays) {
+    const achieved = getAchievedMilestones(currentDays);
+
+    if (achieved.length === 0) {
+        achievementsContainer.innerHTML = '<p class="no-achievements">Keep going! Your first milestone is coming soon! 💪</p>';
+        return;
+    }
+
+    achievementsContainer.innerHTML = achieved.map((milestone, index) => {
+        const achievedDate = new Date(SOBRIETY_START_DATE);
+        achievedDate.setDate(achievedDate.getDate() + milestone.days);
+        const dateStr = formatDate(achievedDate.toISOString().split('T')[0]);
+
+        return `
+            <div class="achievement-card" style="animation-delay: ${index * 0.05}s">
+                <div class="achievement-icon">🏆</div>
+                <div class="achievement-info">
+                    <div class="achievement-title">${milestone.title}</div>
+                    <div class="achievement-message">${milestone.message}</div>
+                    <div class="achievement-date">Achieved: ${dateStr}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
 // Format date for display
 function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString('sv-SE', {
+    return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
@@ -137,21 +170,21 @@ function displayResult() {
     // Build breakdown text
     let breakdownParts = [];
     if (breakdown.years > 0) {
-        breakdownParts.push(`${breakdown.years} ${breakdown.years === 1 ? 'år' : 'år'}`);
+        breakdownParts.push(`${breakdown.years} ${breakdown.years === 1 ? 'year' : 'years'}`);
     }
     if (breakdown.months > 0) {
-        breakdownParts.push(`${breakdown.months} ${breakdown.months === 1 ? 'månad' : 'månader'}`);
+        breakdownParts.push(`${breakdown.months} ${breakdown.months === 1 ? 'month' : 'months'}`);
     }
     if (breakdown.weeks > 0) {
-        breakdownParts.push(`${breakdown.weeks} ${breakdown.weeks === 1 ? 'vecka' : 'veckor'}`);
+        breakdownParts.push(`${breakdown.weeks} ${breakdown.weeks === 1 ? 'week' : 'weeks'}`);
     }
     if (breakdown.days > 0 || breakdownParts.length === 0) {
-        breakdownParts.push(`${breakdown.days} ${breakdown.days === 1 ? 'dag' : 'dagar'}`);
+        breakdownParts.push(`${breakdown.days} ${breakdown.days === 1 ? 'day' : 'days'}`);
     }
 
     // Show breakdown
     const breakdownText = breakdownParts.join(', ');
-    const totalWeeksText = `(${breakdown.totalWeeks} ${breakdown.totalWeeks === 1 ? 'vecka' : 'veckor'} totalt)`;
+    const totalWeeksText = `(${breakdown.totalWeeks} ${breakdown.totalWeeks === 1 ? 'week' : 'weeks'} total)`;
 
     // Create or update breakdown display
     let breakdownDiv = document.getElementById('time-breakdown');
@@ -162,7 +195,7 @@ function displayResult() {
         document.querySelector('.date-info').appendChild(breakdownDiv);
     }
     breakdownDiv.innerHTML = `
-        <div class="breakdown-title">Det är:</div>
+        <div class="breakdown-title">That's:</div>
         <div class="breakdown-text">${breakdownText}</div>
         <div class="breakdown-weeks">${totalWeeksText}</div>
     `;
@@ -172,11 +205,14 @@ function displayResult() {
     const nextMilestone = MILESTONES.find(m => m.days > days);
 
     if (milestone) {
-        milestoneInfo.innerHTML = `<div class="milestone-badge">🎉 Milstolpe! ${milestone.message}</div>`;
+        milestoneInfo.innerHTML = `<div class="milestone-badge">🎉 Milestone! ${milestone.message}</div>`;
     } else if (nextMilestone) {
         const daysToGo = nextMilestone.days - days;
-        milestoneInfo.innerHTML = `<div class="next-milestone">Nästa milstolpe om ${daysToGo} ${daysToGo === 1 ? 'dag' : 'dagar'}</div>`;
+        milestoneInfo.innerHTML = `<div class="next-milestone">Next milestone in ${daysToGo} ${daysToGo === 1 ? 'day' : 'days'}</div>`;
     }
+
+    // Display achievements
+    displayAchievements(days);
 }
 
 // Check if today is a milestone day and celebrate
