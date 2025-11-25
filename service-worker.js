@@ -1,6 +1,5 @@
 const CACHE_NAME = "counter-cache-v1";
 const urlsToCache = [
-  "/counter/",
   "/counter/index.html",
   "/counter/manifest.json",
   "/counter/icons/icon-192x192.png",
@@ -21,15 +20,21 @@ self.addEventListener("activate", event => {
   event.waitUntil(self.clients.claim());
 });
 
-// Hantera fetch: returnera cache om offline, fallback till index.html
+// Fetch-handler för offline-support
 self.addEventListener("fetch", event => {
+  // Om det är en navigeringsbegäran (alltså när användaren skriver URL eller klickar på länkar)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      caches.match("/counter/index.html")
+        .then(response => response || fetch(event.request))
+    );
+    return;
+  }
+
+  // Annars: försök hämta från cache först, annars från nätverket
   event.respondWith(
     caches.match(event.request).then(response => {
-      // Returnera från cache om vi har filen
-      if (response) return response;
-
-      // Annars returnera index.html som fallback
-      return caches.match("/counter/index.html");
+      return response || fetch(event.request);
     })
   );
 });
