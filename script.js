@@ -1,3 +1,6 @@
+// DEBUG: Script is loading
+console.log("🚀 Script.js is loading...");
+
 // Elements
 const startDateInput = document.getElementById('start-date');
 const calculateBtn = document.getElementById('calculate-btn');
@@ -13,6 +16,12 @@ const currentMilestone = document.getElementById('current-milestone');
 const nextMilestoneEl = document.getElementById('next-milestone');
 const milestonesAchieved = document.getElementById('milestones-achieved');
 const milestoneBadges = document.getElementById('milestone-badges');
+
+console.log("✅ All elements found:", {
+    startDateInput: !!startDateInput,
+    calculateBtn: !!calculateBtn,
+    resultSection: !!resultSection
+});
 
 // Milestones (in days)
 const milestones = [1, 7, 14, 30, 60, 90, 180, 365, 730, 1095];
@@ -266,17 +275,23 @@ function renderSavedCounters() {
 }
 
 // Event listener for calculate button
+console.log("📌 Attaching click listener to button...");
 calculateBtn.addEventListener('click', () => {
+    console.log("🎯 Button clicked!");
     const selectedDate = startDateInput.value;
+    console.log("📅 Selected date:", selectedDate);
 
     if (!selectedDate) {
+        console.log("❌ No date selected");
         alert('Vänligen välj ett datum');
         return;
     }
 
+    console.log("✨ Calling displayResult...");
     displayResult(selectedDate);
     saveCounter(selectedDate);
 });
+console.log("✅ Click listener attached!");
 
 // Allow Enter key to calculate
 startDateInput.addEventListener('keypress', (e) => {
