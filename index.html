@@ -3,136 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dagräknare | Tech & Change</title>
+    <title>Min Resa - Dagräknare</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'tech-blue': '#0066CC',
-                        'tech-cyan': '#00D4FF',
-                        'tech-purple': '#6366F1',
-                        'neural-green': '#00FF88',
-                        'ai-orange': '#FF6B35'
-                    },
-                    fontFamily: {
-                        'mono': ['JetBrains Mono', 'Monaco', 'Consolas', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <style>
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        .neural-pattern {
-            background-image: radial-gradient(circle at 2px 2px, rgba(0, 212, 255, 0.15) 1px, transparent 0);
-            background-size: 40px 40px;
+        .gradient-bg {
+            background: linear-gradient(135deg, #FF6B35 0%, #FFA500 25%, #FFD700 50%, #9ACD32 75%, #4CAF50 100%);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
         }
 
-        .system-grid {
-            background-image:
-                linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
-        .ai-glow {
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-            transition: box-shadow 0.3s ease, transform 0.2s ease;
+        .celebration-bounce {
+            animation: bounce 1s ease-in-out;
         }
 
-        .ai-glow:hover {
-            box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
-            transform: translateY(-2px);
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
-        .card-glow:hover {
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        .glow-card {
+            box-shadow: 0 10px 40px rgba(255, 107, 53, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .glow-card:hover {
+            box-shadow: 0 15px 50px rgba(255, 107, 53, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .milestone-badge {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .progress-bar {
+            transition: width 0.6s ease;
+        }
+
+        .sparkle {
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
-    <!-- Background patterns -->
-    <div class="fixed inset-0 neural-pattern opacity-30 pointer-events-none"></div>
-    <div class="fixed inset-0 system-grid opacity-20 pointer-events-none"></div>
-
+<body class="gradient-bg min-h-screen">
     <!-- Main container -->
-    <div class="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-20">
+    <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
         <div class="max-w-4xl w-full">
             <!-- Header -->
-            <div class="text-center mb-12">
-                <h1 class="text-5xl md:text-6xl font-bold mb-4">
-                    <span class="bg-gradient-to-r from-tech-cyan via-tech-purple to-neural-green bg-clip-text text-transparent">
-                        📅 Dagräknare
-                    </span>
+            <div class="text-center mb-8">
+                <h1 class="text-5xl md:text-6xl font-bold text-white mb-3 drop-shadow-lg">
+                    ✨ Min Resa ✨
                 </h1>
-                <p class="text-xl text-gray-300 font-light font-mono">
-                    &gt; counter.calculate(start_date)
+                <p class="text-xl md:text-2xl text-white/90 font-light">
+                    Varje dag är en seger
                 </p>
             </div>
 
             <!-- Input Section -->
-            <div class="bg-gray-800/50 border border-gray-700 rounded-2xl p-8 mb-8 hover:border-tech-cyan transition-colors card-glow">
-                <label for="start-date" class="block text-lg font-semibold mb-4 text-tech-cyan">
-                    Välj startdatum:
+            <div class="bg-white rounded-3xl p-8 mb-6 glow-card">
+                <label for="start-date" class="block text-lg font-semibold mb-4 text-gray-800">
+                    📅 När började din resa?
                 </label>
                 <input
                     type="date"
                     id="start-date"
                     required
-                    class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 mb-6 focus:outline-none focus:border-tech-cyan transition-colors text-white"
+                    class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 mb-6 focus:outline-none focus:border-orange-400 transition-colors text-gray-800 text-lg"
                 >
                 <button
                     id="calculate-btn"
-                    class="w-full ai-glow bg-gradient-to-r from-neural-green to-tech-cyan text-gray-900 py-4 rounded-lg font-semibold text-lg hover:scale-105 transition-transform"
+                    class="w-full bg-gradient-to-r from-orange-500 to-green-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                 >
-                    Beräkna Dagar
+                    🎉 Visa mina framsteg
                 </button>
             </div>
 
             <!-- Result Section -->
-            <div class="result-section hidden mb-8" id="result-section">
-                <div class="bg-gradient-to-br from-tech-cyan/20 to-tech-purple/20 border border-tech-purple rounded-2xl p-8 mb-6">
-                    <div class="text-center">
-                        <div class="text-7xl md:text-8xl font-bold mb-4">
-                            <span class="bg-gradient-to-r from-neural-green to-tech-cyan bg-clip-text text-transparent" id="days-count">0</span>
-                        </div>
-                        <div class="text-2xl text-gray-300 font-light">dagar</div>
+            <div class="result-section hidden mb-6" id="result-section">
+                <!-- Main Counter -->
+                <div class="bg-white rounded-3xl p-10 mb-6 glow-card text-center">
+                    <div class="mb-4">
+                        <div class="text-8xl md:text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-green-500 celebration-bounce" id="days-count">0</div>
+                        <div class="text-3xl md:text-4xl font-semibold text-gray-700 mt-2">dagar stark! 💪</div>
+                    </div>
+
+                    <!-- Encouraging Message -->
+                    <div class="mt-6 p-4 bg-gradient-to-r from-orange-50 to-green-50 rounded-2xl">
+                        <p class="text-xl font-semibold text-gray-800" id="encouragement-text">Fantastiskt jobbat!</p>
                     </div>
                 </div>
 
-                <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
-                    <div class="grid md:grid-cols-2 gap-4 font-mono text-sm">
-                        <div>
-                            <span class="text-tech-cyan">start_date:</span>
-                            <span class="text-white ml-2" id="from-date">-</span>
+                <!-- Milestone Progress -->
+                <div class="bg-white rounded-3xl p-6 mb-6 glow-card" id="milestone-section">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">🎯 Nästa milstolpe</h3>
+                    <div class="mb-2 flex justify-between text-sm font-semibold text-gray-600">
+                        <span id="current-milestone">0 dagar</span>
+                        <span id="next-milestone">7 dagar</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                        <div class="progress-bar bg-gradient-to-r from-orange-500 to-green-500 h-4 rounded-full" id="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2 text-center" id="progress-text">0 dagar kvar!</p>
+                </div>
+
+                <!-- Achieved Milestones -->
+                <div class="bg-white rounded-3xl p-6 mb-6 glow-card hidden" id="milestones-achieved">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">🏆 Uppnådda milstolpar</h3>
+                    <div class="flex flex-wrap gap-3" id="milestone-badges"></div>
+                </div>
+
+                <!-- Date Info -->
+                <div class="bg-white/90 rounded-2xl p-6">
+                    <div class="grid md:grid-cols-2 gap-4 text-gray-700">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-2">🚀</span>
+                            <div>
+                                <div class="text-sm font-medium text-gray-500">Startdatum</div>
+                                <div class="font-semibold" id="from-date">-</div>
+                            </div>
                         </div>
-                        <div>
-                            <span class="text-neural-green">current_date:</span>
-                            <span class="text-white ml-2" id="to-date">-</span>
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-2">📅</span>
+                            <div>
+                                <div class="text-sm font-medium text-gray-500">Idag</div>
+                                <div class="font-semibold" id="to-date">-</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Saved Counters -->
-            <div class="saved-counters mt-12" id="saved-counters">
-                <h2 class="text-3xl font-bold mb-6 text-center">
-                    <span class="bg-gradient-to-r from-tech-purple to-ai-orange bg-clip-text text-transparent">
-                        Sparade Räknare
-                    </span>
+            <div class="saved-counters mt-8" id="saved-counters">
+                <h2 class="text-3xl font-bold text-white text-center mb-6 drop-shadow-lg">
+                    💫 Mina räknare
                 </h2>
                 <div id="counters-list" class="space-y-4"></div>
             </div>
