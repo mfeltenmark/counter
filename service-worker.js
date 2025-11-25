@@ -1,41 +1,28 @@
-const CACHE_NAME = "counter-cache-v2";
-
+const CACHE_NAME = "counter-cache-v1";
 const urlsToCache = [
   "./",
   "./index.html",
-  "./manifest.json",
-  "https://cdn.tailwindcss.com"
+  "./manifest.json"
 ];
 
-// Installera service workern och cacha viktiga filer
+// Installera service workern och cacha alla filer
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
       .then(() => self.skipWaiting())
-      .catch(err => {
-        console.error("Cache addAll failed:", err);
-      })
   );
 });
 
-// Aktivera service workern och rensa gamla cachar
+// Aktivera service workern direkt
 self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
-  );
+  event.waitUntil(self.clients.claim());
 });
 
 // Fetch-handler för offline-support
 self.addEventListener("fetch", event => {
-  // Navigeringsbegäran (sidladdningar)
-  if (event.request.mode === "navigate") {
+  // Om det är en navigeringsbegäran (alltså när användaren skriver URL eller klickar på länkar)
+  if (event.request.mode === 'navigate') {
     event.respondWith(
       caches.match("./index.html")
         .then(response => response || fetch(event.request))
@@ -43,24 +30,10 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // Övriga GET-requests: cache-first + dynamisk caching
-  if (event.request.method === "GET") {
-    event.respondWith(
-      caches.match(event.request).then(cached => {
-        if (cached) {
-          return cached;
-        }
-
-        return fetch(event.request)
-          .then(response => {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, copy);
-            });
-            return response;
-          })
-          .catch(() => cached);
-      })
-    );
-  }
+  // Annars: försök hämta från cache först, annars från nätverket
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
+  );
 });
