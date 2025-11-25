@@ -1,8 +1,10 @@
-const CACHE_NAME = "counter-cache-v1";
+const CACHE_NAME = "counter-cache-v2";
 const urlsToCache = [
   "./",           // roten för appen
   "./index.html",
   "./manifest.json"
+, "/counter/icons/icon-192x192.png",
+  "/counter/icons/icon-512x512.png",
 ];
 
 // Installera service workern och cacha alla filer
