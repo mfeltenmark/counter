@@ -300,39 +300,45 @@
             return `${days} amazing days! You are an inspiration! 🌟`;
         }
 
-        // Fire confetti
-        function fireConfetti() {
-            const duration = 3000;
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+ // Fire confetti
+function fireConfetti() {
+    // Om biblioteket inte är laddat (t.ex. offline) – gör inget
+    if (typeof confetti !== "function") {
+        return;
+    }
 
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
-            const interval = setInterval(function() {
-                const timeLeft = animationEnd - Date.now();
+    function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+    }
 
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
+    const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
 
-                const particleCount = 50 * (timeLeft / duration);
-
-                confetti({
-                    ...defaults,
-                    particleCount,
-                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-                    colors: ['#FF6B35', '#FFA500', '#FFD700', '#9ACD32', '#4CAF50']
-                });
-                confetti({
-                    ...defaults,
-                    particleCount,
-                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-                    colors: ['#FF6B35', '#FFA500', '#FFD700', '#9ACD32', '#4CAF50']
-                });
-            }, 250);
+        if (timeLeft <= 0) {
+            return clearInterval(interval);
         }
+
+        const particleCount = 50 * (timeLeft / duration);
+
+        confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+            colors: ['#FF6B35', '#FFA500', '#FFD700', '#9ACD32', '#4CAF50']
+        });
+        confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+            colors: ['#FF6B35', '#FFA500', '#FFD700', '#9ACD32', '#4CAF50']
+        });
+    }, 250);
+}
+
 
         // Get next milestone
         function getNextMilestone(days) {
