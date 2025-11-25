@@ -1,3 +1,6 @@
+// DEBUG: Script is loading
+console.log("🚀 Script.js is loading...");
+
 // Elements
 const startDateInput = document.getElementById('start-date');
 const calculateBtn = document.getElementById('calculate-btn');
@@ -13,6 +16,12 @@ const currentMilestone = document.getElementById('current-milestone');
 const nextMilestoneEl = document.getElementById('next-milestone');
 const milestonesAchieved = document.getElementById('milestones-achieved');
 const milestoneBadges = document.getElementById('milestone-badges');
+
+console.log("✅ All elements found:", {
+    startDateInput: !!startDateInput,
+    calculateBtn: !!calculateBtn,
+    resultSection: !!resultSection
+});
 
 // Milestones (in days)
 const milestones = [1, 7, 14, 30, 60, 90, 180, 365, 730, 1095];
@@ -138,12 +147,13 @@ function updateMilestoneProgress(days) {
     }
 }
 
-// Set today's date as default
-const today = new Date().toISOString().split('T')[0];
-startDateInput.value = today;
-
 // Load saved counters from localStorage
 let savedCounters = JSON.parse(localStorage.getItem('counters')) || [];
+
+// Set default date (use last used date if available, otherwise today)
+const today = new Date().toISOString().split('T')[0];
+const lastUsedDate = localStorage.getItem('lastUsedDate') || today;
+startDateInput.value = lastUsedDate;
 
 // Calculate days between two dates
 function calculateDays(startDate, endDate = new Date()) {
@@ -165,7 +175,7 @@ function formatDate(dateString) {
 }
 
 // Display result
-function displayResult(startDate) {
+function displayResult(startDate, showConfetti = true) {
     const days = calculateDays(startDate);
     const todayDate = new Date();
 
@@ -181,13 +191,18 @@ function displayResult(startDate) {
 
     resultSection.classList.remove('hidden');
 
-    // Check if milestone achieved and fire confetti
-    if (milestones.includes(days)) {
+    // Save last used date
+    localStorage.setItem('lastUsedDate', startDate);
+
+    // Check if milestone achieved and fire confetti (only if showConfetti is true)
+    if (showConfetti && milestones.includes(days)) {
         fireConfetti();
     }
 
-    // Scroll to result
-    resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // Scroll to result (only if showConfetti is true, meaning user clicked button)
+    if (showConfetti) {
+        resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 }
 
 // Save counter
@@ -260,17 +275,23 @@ function renderSavedCounters() {
 }
 
 // Event listener for calculate button
+console.log("📌 Attaching click listener to button...");
 calculateBtn.addEventListener('click', () => {
+    console.log("🎯 Button clicked!");
     const selectedDate = startDateInput.value;
+    console.log("📅 Selected date:", selectedDate);
 
     if (!selectedDate) {
+        console.log("❌ No date selected");
         alert('Vänligen välj ett datum');
         return;
     }
 
+    console.log("✨ Calling displayResult...");
     displayResult(selectedDate);
     saveCounter(selectedDate);
 });
+console.log("✅ Click listener attached!");
 
 // Allow Enter key to calculate
 startDateInput.addEventListener('keypress', (e) => {
@@ -281,6 +302,15 @@ startDateInput.addEventListener('keypress', (e) => {
 
 // Initial render of saved counters
 renderSavedCounters();
+
+// Auto-load result if there's a saved date (without confetti or scrolling)
+if (lastUsedDate && lastUsedDate !== today) {
+    // If there's a previously used date (not today), show it automatically
+    displayResult(lastUsedDate, false);
+} else if (savedCounters.length > 0) {
+    // If no last used date but there are saved counters, show the first one
+    displayResult(savedCounters[0].date, false);
+}
 
 // Update saved counters every minute to keep the day count current
 setInterval(() => {
