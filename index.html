@@ -222,20 +222,55 @@
         const toggleFormBtn = document.getElementById('toggle-form-btn');
         const closeFormBtn = document.getElementById('close-form-btn');
 
-        // Milestones (in days)
-        const milestones = [1, 7, 14, 30, 60, 90, 180, 365, 730, 1095];
+        // Milestones (in days) - Tätare för bättre känsla av framsteg
+        const milestones = [
+            1,      // 1 dag
+            7,      // 1 vecka
+            14,     // 2 veckor
+            21,     // 3 veckor
+            28,     // 4 veckor
+            35,     // 5 veckor
+            42,     // 6 veckor
+            49,     // 7 veckor
+            56,     // 8 veckor
+            60,     // 2 månader
+            75,     // 2.5 månader
+            90,     // 3 månader
+            120,    // 4 månader
+            150,    // 5 månader
+            180,    // 6 månader
+            240,    // 8 månader
+            300,    // 10 månader
+            365,    // 1 år
+            456,    // 15 månader
+            548,    // 18 månader
+            730,    // 2 år
+            1095    // 3 år
+        ];
 
         // Milestone names
         const milestoneNames = {
             1: '🌟 Första dagen',
             7: '📅 1 vecka',
             14: '🎯 2 veckor',
-            30: '🏆 1 månad',
+            21: '💫 3 veckor',
+            28: '🌸 4 veckor',
+            35: '✨ 5 veckor',
+            42: '🎨 6 veckor',
+            49: '🚀 7 veckor',
+            56: '🌺 8 veckor',
             60: '💎 2 månader',
+            75: '🌟 2.5 månader',
             90: '👑 3 månader',
+            120: '🏅 4 månader',
+            150: '💪 5 månader',
             180: '🌈 6 månader',
+            240: '🎯 8 månader',
+            300: '⭐ 10 månader',
             365: '🎊 1 år',
-            730: '🔥 2 år',
+            456: '🔥 15 månader',
+            548: '💫 18 månader',
+            730: '👑 2 år',
             1095: '⭐ 3 år'
         };
 
