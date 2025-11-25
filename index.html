@@ -1,78 +1,77 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Min Resa - Dagräknare</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Min Resa - Dagräknare</title>
 
-    <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json">
 
+  <!-- Tailwind från din build -->
+  <link rel="stylesheet" href="./styles.css">
 
-    <!-- Tailwind CSS -->
-<link rel="stylesheet" href="./styles.css">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <!-- DINA egna custom styles MÅSTE ligga EFTER Tailwind -->
+<style>
+  body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
 
-    <!-- Canvas Confetti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  .gradient-bg {
+    background: linear-gradient(135deg, #FF6B35 0%, #FFA500 25%, #FFD700 50%, #9ACD32 75%, #4CAF50 100%);
+    background-size: 400% 400%;
+    animation: gradient-shift 15s ease infinite;
+  }
 
-    <style>
-        body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
 
-        .gradient-bg {
-            background: linear-gradient(135deg, #FF6B35 0%, #FFA500 25%, #FFD700 50%, #9ACD32 75%, #4CAF50 100%);
-            background-size: 400% 400%;
-            animation: gradient-shift 15s ease infinite;
-        }
+  .celebration-bounce {
+    animation: bounce 1s ease-in-out;
+  }
 
-        @keyframes gradient-shift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
+  @keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
 
-        .celebration-bounce {
-            animation: bounce 1s ease-in-out;
-        }
+  .glow-card {
+    box-shadow: 0 10px 40px rgba(255, 107, 53, 0.2);
+    transition: all 0.3s ease;
+  }
 
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
+  .glow-card:hover {
+    box-shadow: 0 15px 50px rgba(255, 107, 53, 0.3);
+    transform: translateY(-5px);
+  }
 
-        .glow-card {
-            box-shadow: 0 10px 40px rgba(255, 107, 53, 0.2);
-            transition: all 0.3s ease;
-        }
+  .milestone-badge {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  }
 
-        .glow-card:hover {
-            box-shadow: 0 15px 50px rgba(255, 107, 53, 0.3);
-            transform: translateY(-5px);
-        }
+  .progress-bar {
+    transition: width 0.6s ease;
+  }
 
-        .milestone-badge {
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
-        }
+  .sparkle {
+    animation: sparkle 2s ease-in-out infinite;
+  }
 
-        .progress-bar {
-            transition: width 0.6s ease;
-        }
+  @keyframes sparkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+  }
+</style>
 
-        .sparkle {
-            animation: sparkle 2s ease-in-out infinite;
-        }
-
-        @keyframes sparkle {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-        }
-    </style>
 </head>
+
 <body class="gradient-bg min-h-screen">
     <!-- Main container -->
     <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
