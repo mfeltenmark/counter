@@ -86,8 +86,23 @@
 
             <!-- Input Section -->
             <div class="bg-white rounded-3xl p-8 mb-6 glow-card">
-                <label for="start-date" class="block text-lg font-semibold mb-4 text-gray-800">
-                    📅 När började din resa?
+                <h2 class="text-2xl font-bold mb-2 text-gray-800">
+                    ➕ Skapa ny räknare
+                </h2>
+                <p class="text-sm text-gray-600 mb-4">
+                    Du kan ha flera räknare. Vid återfall, starta bara en ny - din historia bevaras! 💪
+                </p>
+                <label for="counter-name" class="block text-sm font-semibold mb-2 text-gray-700">
+                    📝 Namn på räknare (valfritt)
+                </label>
+                <input
+                    type="text"
+                    id="counter-name"
+                    placeholder="t.ex. 'Min resa 2024' eller 'Försök 2'"
+                    class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:border-orange-400 transition-colors text-gray-800"
+                >
+                <label for="start-date" class="block text-sm font-semibold mb-2 text-gray-700">
+                    📅 Startdatum
                 </label>
                 <input
                     type="date"
@@ -99,7 +114,7 @@
                     id="calculate-btn"
                     class="w-full bg-gradient-to-r from-orange-500 to-green-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                 >
-                    🎉 Visa mina framsteg
+                    🎯 Skapa räknare
                 </button>
             </div>
 
@@ -169,11 +184,9 @@
     </div>
 
     <script>
-        // DEBUG: Script is loading
-        console.log("🚀 Script.js is loading...");
-
         // Elements
         const startDateInput = document.getElementById('start-date');
+        const counterNameInput = document.getElementById('counter-name');
         const calculateBtn = document.getElementById('calculate-btn');
         const resultSection = document.getElementById('result-section');
         const daysCount = document.getElementById('days-count');
@@ -187,12 +200,6 @@
         const nextMilestoneEl = document.getElementById('next-milestone');
         const milestonesAchieved = document.getElementById('milestones-achieved');
         const milestoneBadges = document.getElementById('milestone-badges');
-
-        console.log("✅ All elements found:", {
-            startDateInput: !!startDateInput,
-            calculateBtn: !!calculateBtn,
-            resultSection: !!resultSection
-        });
 
         // Milestones (in days)
         const milestones = [1, 7, 14, 30, 60, 90, 180, 365, 730, 1095];
@@ -321,10 +328,12 @@
         // Load saved counters from localStorage
         let savedCounters = JSON.parse(localStorage.getItem('counters')) || [];
 
-        // Set default date (use last used date if available, otherwise today)
+        // Set default date to today for creating new counters
         const today = new Date().toISOString().split('T')[0];
-        const lastUsedDate = localStorage.getItem('lastUsedDate') || today;
-        startDateInput.value = lastUsedDate;
+        startDateInput.value = today;
+
+        // Get last used date for auto-displaying results
+        const lastUsedDate = localStorage.getItem('lastUsedDate');
 
         // Calculate days between two dates
         function calculateDays(startDate, endDate = new Date()) {
@@ -377,14 +386,15 @@
         }
 
         // Save counter
-        function saveCounter(startDate) {
+        function saveCounter(startDate, customName = '') {
             const counterExists = savedCounters.some(counter => counter.date === startDate);
 
             if (!counterExists) {
+                const counterName = customName.trim() || `Min resa från ${formatDate(startDate)}`;
                 savedCounters.push({
                     id: Date.now(),
                     date: startDate,
-                    name: `Min resa från ${formatDate(startDate)}`
+                    name: counterName
                 });
 
                 localStorage.setItem('counters', JSON.stringify(savedCounters));
@@ -414,7 +424,7 @@
                 return `
                     <div class="bg-white rounded-2xl p-6 glow-card">
                         <div class="flex justify-between items-start gap-4">
-                            <div class="flex-1">
+                            <div class="flex-1 cursor-pointer" onclick="displayResult('${counter.date}', false); document.getElementById('result-section').scrollIntoView({ behavior: 'smooth', block: 'start' });">
                                 <div class="text-lg font-semibold text-gray-800 mb-2">
                                     ${counter.name}
                                 </div>
@@ -432,6 +442,9 @@
                                 <div class="text-sm text-gray-500">
                                     Sedan: ${formatDate(counter.date)}
                                 </div>
+                                <div class="text-xs text-orange-600 font-semibold mt-2">
+                                    👆 Klicka för detaljer
+                                </div>
                             </div>
                             <button
                                 class="bg-gradient-to-r from-red-400 to-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:scale-105 transition-transform text-sm"
@@ -446,23 +459,25 @@
         }
 
         // Event listener for calculate button
-        console.log("📌 Attaching click listener to button...");
         calculateBtn.addEventListener('click', () => {
-            console.log("🎯 Button clicked!");
             const selectedDate = startDateInput.value;
-            console.log("📅 Selected date:", selectedDate);
+            const customName = counterNameInput.value;
 
             if (!selectedDate) {
-                console.log("❌ No date selected");
                 alert('Vänligen välj ett datum');
                 return;
             }
 
-            console.log("✨ Calling displayResult...");
             displayResult(selectedDate);
-            saveCounter(selectedDate);
+            saveCounter(selectedDate, customName);
+
+            // Clear inputs after creating counter
+            counterNameInput.value = '';
+            startDateInput.value = new Date().toISOString().split('T')[0];
+
+            // Scroll to saved counters to show the new one
+            document.getElementById('saved-counters').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
-        console.log("✅ Click listener attached!");
 
         // Allow Enter key to calculate
         startDateInput.addEventListener('keypress', (e) => {
