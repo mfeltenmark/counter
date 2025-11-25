@@ -1,13 +1,16 @@
-const CACHE_NAME = "counter-cache-v2"; // bumpa version vid nya releaser
+const CACHE_NAME = "counter-cache-v3";
 
-// Bas-resurser som ska finnas offline
+// Bas-resurser (appshell + viktiga grejer)
 const urlsToCache = [
   "./",
   "./index.html",
   "./manifest.json",
   "./offline.html",
+
+  // Externa resurser (cachas första gången du är online)
   "https://cdn.tailwindcss.com",
-  "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"
+  "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js",
+  "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap"
 ];
 
 // Installera service workern och cacha viktiga filer
@@ -35,12 +38,11 @@ self.addEventListener("activate", event => {
   );
 });
 
-// Fetch-handler: appshell + cache-first för statiska resurser
+// Fetch-handler
 self.addEventListener("fetch", event => {
-  // Hantera sidnavigeringar (HTML)
+  // Navigeringar (HTML-sidor)
   if (event.request.mode === "navigate") {
     event.respondWith(
-      // Försök nätet först
       fetch(event.request)
         .then(response => {
           // Uppdatera index.html i cache med senaste versionen
@@ -51,8 +53,6 @@ self.addEventListener("fetch", event => {
           return response;
         })
         .catch(() =>
-          // Om offline: försök index.html från cache,
-          // annars visa offline.html
           caches.match("./index.html")
             .then(resp => resp || caches.match("./offline.html"))
         )
@@ -60,7 +60,7 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // Övriga GET-requests: cache-first, fallback nätet
+  // Övriga GET-requests (CSS, JS, fonter, etc)
   if (event.request.method === "GET") {
     event.respondWith(
       caches.match(event.request).then(cached => {
@@ -70,7 +70,7 @@ self.addEventListener("fetch", event => {
 
         return fetch(event.request)
           .then(response => {
-            // Lägg nya resurser i cache (t.ex. CDN scripts)
+            // Lägg nya (framförallt externa) resurser i cache
             const copy = response.clone();
             caches.open(CACHE_NAME).then(cache => {
               cache.put(event.request, copy);
@@ -78,8 +78,7 @@ self.addEventListener("fetch", event => {
             return response;
           })
           .catch(() => {
-            // Vid total offline och resurs saknas:
-            // om det är ett dokument → visa offline-sidan
+            // Om helt offline och resurs saknas
             if (event.request.destination === "document") {
               return caches.match("./offline.html");
             }
