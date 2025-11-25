@@ -460,8 +460,26 @@
 
         // Delete counter
         function deleteCounter(id) {
+            // Find the counter being deleted
+            const deletedCounter = savedCounters.find(counter => counter.id === id);
+
+            // Remove it from the array
             savedCounters = savedCounters.filter(counter => counter.id !== id);
             localStorage.setItem('counters', JSON.stringify(savedCounters));
+
+            // If the deleted counter was the one being displayed, update the display
+            const currentLastUsedDate = localStorage.getItem('lastUsedDate');
+            if (deletedCounter && deletedCounter.date === currentLastUsedDate) {
+                if (savedCounters.length > 0) {
+                    // Show the first remaining counter
+                    displayResult(savedCounters[0].date, false);
+                } else {
+                    // No counters left, hide the result section
+                    resultSection.classList.add('hidden');
+                    localStorage.removeItem('lastUsedDate');
+                }
+            }
+
             renderSavedCounters();
         }
 
@@ -557,9 +575,15 @@
         renderSavedCounters();
 
         // Auto-load result if there's a saved date (without confetti or scrolling)
-        if (lastUsedDate && lastUsedDate !== today) {
-            // If there's a previously used date (not today), show it automatically
-            displayResult(lastUsedDate, false);
+        if (lastUsedDate) {
+            // Check if the lastUsedDate still exists in saved counters
+            const counterExists = savedCounters.some(counter => counter.date === lastUsedDate);
+            if (counterExists) {
+                displayResult(lastUsedDate, false);
+            } else if (savedCounters.length > 0) {
+                // Last used counter was deleted, show the first available one
+                displayResult(savedCounters[0].date, false);
+            }
         } else if (savedCounters.length > 0) {
             // If no last used date but there are saved counters, show the first one
             displayResult(savedCounters[0].date, false);
