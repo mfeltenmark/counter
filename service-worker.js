@@ -21,11 +21,15 @@ self.addEventListener("activate", event => {
   event.waitUntil(self.clients.claim());
 });
 
-// Hantera fetch: returnera cache om offline
+// Hantera fetch: returnera cache om offline, fallback till index.html
 self.addEventListener("fetch", event => {
   event.respondWith(
     caches.match(event.request).then(response => {
-      return response || fetch(event.request);
+      // Returnera från cache om vi har filen
+      if (response) return response;
+
+      // Annars returnera index.html som fallback
+      return caches.match("/counter/index.html");
     })
   );
 });
