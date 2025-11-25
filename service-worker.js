@@ -1,14 +1,13 @@
 const CACHE_NAME = "counter-cache-v2";
 
 const urlsToCache = [
-  "./",             // roten
+  "./",
   "./index.html",
   "./manifest.json",
-  "./styles.css",
-  "./offline.html"
+  "https://cdn.tailwindcss.com"
 ];
 
-// Installera service workern och cacha alla filer
+// Installera service workern och cacha viktiga filer
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -20,7 +19,7 @@ self.addEventListener("install", event => {
   );
 });
 
-// Aktivera service workern direkt och rensa gamla cachar
+// Aktivera service workern och rensa gamla cachar
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -38,21 +37,29 @@ self.addEventListener("fetch", event => {
   // Navigeringsbegäran (sidladdningar)
   if (event.request.mode === "navigate") {
     event.respondWith(
-      fetch(event.request)
-        .catch(() =>
-          // Om nätet är nere: försök index från cache, annars offline.html
-          caches.match("./index.html")
-            .then(resp => resp || caches.match("./offline.html"))
-        )
+      caches.match("./index.html")
+        .then(response => response || fetch(event.request))
     );
     return;
   }
 
-  // Övriga requests: cache-first
+  // Övriga GET-requests: cache-first + dynamisk caching
   if (event.request.method === "GET") {
     event.respondWith(
-      caches.match(event.request).then(response => {
-        return response || fetch(event.request);
+      caches.match(event.request).then(cached => {
+        if (cached) {
+          return cached;
+        }
+
+        return fetch(event.request)
+          .then(response => {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, copy);
+            });
+            return response;
+          })
+          .catch(() => cached);
       })
     );
   }
