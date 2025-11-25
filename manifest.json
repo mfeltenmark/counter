@@ -1,7 +1,7 @@
 {
   "short_name": "Counter",
   "name": "Min Resa – Räknare",
-  "start_url": "/counter/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#00aaff"

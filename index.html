@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Min Resa - Dagräknare</title>
 
-    <link rel="manifest" href="/counter/manifest.json">
+    <link rel="manifest" href="./manifest.json">
 
 
     <!-- Tailwind CSS -->
@@ -597,11 +597,16 @@
             renderSavedCounters();
         }, 60000);
     </script>
-    <script>
+<script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("./service-worker.js")
-        .catch(err => console.log("SW registration failed:", err));
+        .then(reg => {
+          console.log("Service worker registered:", reg.scope);
+        })
+        .catch(err => {
+          console.log("SW registration failed:", err);
+        });
     });
   }
 </script>
