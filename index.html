@@ -257,27 +257,28 @@
             1095: '⭐ 3 Years'
         };
 
-        function getEncouragingMessage(days) {
-            if (days === 0) return 'Your journey begins today! 🚀';
-            if (days === 1) return 'First day complete! You are a star! 🌟';
-            if (days < 7) return `${days} days! Every day is a victory! 💪`;
-            if (days === 7) return 'A whole week! Incredibly strong work! 🎉';
-            if (days < 14) return `${days} days of strength and determination! 💫`;
-            if (days === 14) return 'Two weeks! Your willpower is inspiring! 🌟';
-            if (days < 30) return `${days} amazing days! Keep shining! ✨`;
-            if (days === 30) return 'A whole month! You are unstoppable! 🏆`;
-            if (days < 60) return `${days} days of courage and strength! So proud! 💎`;
-            if (days === 60) return 'Two months! Your journey is mighty! 👑';
-            if (days < 90) return `${days} days! Your power is incredible! 🔥`;
-            if (days === 90) return 'Three months! A true hero! 🦸';
-            if (days < 180) return `${days} days of pure will and strength! 🌈`;
-            if (days === 180) return 'Half a year! Fantastically done! 🎊';
-            if (days < 365) return `${days} days! Your journey inspires! ⭐`;
-            if (days === 365) return 'ONE YEAR! Absolutely incredible! 🎆🎉🏆';
-            if (days < 730) return `${days} days of strength! Legend! 👑`;
-            if (days === 730) return 'TWO YEARS! Unshakeable! 🔥⭐';
-            return `${days} amazing days! You are an inspiration! 🌟`;
-        }
+function getEncouragingMessage(days) {
+    if (days === 0) return 'Your journey begins today! 🚀';
+    if (days === 1) return 'First day complete! You are a star! 🌟';
+    if (days < 7) return `${days} days! Every day is a victory! 💪`;
+    if (days === 7) return 'A whole week! Incredibly strong work! 🎉';
+    if (days < 14) return `${days} days of strength and determination! 💫`;
+    if (days === 14) return 'Two weeks! Your willpower is inspiring! 🌟';
+    if (days < 30) return `${days} amazing days! Keep shining! ✨`;
+    if (days === 30) return 'A whole month! You are unstoppable! 🏆';
+    if (days < 60) return `${days} days of courage and strength! So proud! 💎`;
+    if (days === 60) return 'Two months! Your journey is mighty! 👑';
+    if (days < 90) return `${days} days! Your power is incredible! 🔥`;
+    if (days === 90) return 'Three months! A true hero! 🦸';
+    if (days < 180) return `${days} days of pure will and strength! 🌈`;
+    if (days === 180) return 'Half a year! Fantastically done! 🎊';
+    if (days < 365) return `${days} days! Your journey inspires! ⭐`;
+    if (days === 365) return 'ONE YEAR! Absolutely incredible! 🎆🎉🏆';
+    if (days < 730) return `${days} days of strength! Legend! 👑`;
+    if (days === 730) return 'TWO YEARS! Unshakeable! 🔥⭐';
+    return `${days} amazing days! You are an inspiration! 🌟`;
+}
+
 
         // Confetti (med guard offline)
         function fireConfetti() {
