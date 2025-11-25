@@ -186,23 +186,33 @@
             </div>
 
             <!-- Saved Counters -->
-            <div class="saved-counters mt-8" id="saved-counters">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold text-white drop-shadow-lg">
-                        💫 My Counters
-                    </h2>
-                    <button
-                        id="toggle-form-btn"
-                        class="bg-white/90 hover:bg-white text-orange-600 font-bold text-2xl w-12 h-12 rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all flex items-center justify-center"
-                        title="Create new counter"
-                    >
-                        +
-                    </button>
-                </div>
-                <div id="counters-list" class="space-y-4"></div>
-            </div>
+<div class="saved-counters mt-8" id="saved-counters">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <h2 class="text-3xl font-bold text-white drop-shadow-lg">
+            💫 My Counters
+        </h2>
+
+        <div class="flex items-center gap-3">
+            <!-- Install app button (hidden by default) -->
+            <button
+                id="install-app-btn"
+                class="hidden bg-white/90 hover:bg-white text-green-600 font-semibold px-4 py-2 rounded-full shadow-lg hover:shadow-xl transition-all text-sm flex items-center gap-2"
+            >
+                📲 Install app
+            </button>
+
+            <button
+                id="toggle-form-btn"
+                class="bg-white/90 hover:bg-white text-orange-600 font-bold text-2xl w-12 h-12 rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all flex items-center justify-center"
+                title="Create new counter"
+            >
+                +
+            </button>
         </div>
     </div>
+    <div id="counters-list" class="space-y-4"></div>
+</div>
+
 
     <script>
         // Elements
@@ -300,39 +310,45 @@
             return `${days} amazing days! You are an inspiration! 🌟`;
         }
 
-        // Fire confetti
-        function fireConfetti() {
-            const duration = 3000;
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+ // Fire confetti
+function fireConfetti() {
+    // Om biblioteket inte är laddat (t.ex. offline) – gör inget
+    if (typeof confetti !== "function") {
+        return;
+    }
 
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
-            const interval = setInterval(function() {
-                const timeLeft = animationEnd - Date.now();
+    function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+    }
 
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
+    const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
 
-                const particleCount = 50 * (timeLeft / duration);
-
-                confetti({
-                    ...defaults,
-                    particleCount,
-                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-                    colors: ['#FF6B35', '#FFA500', '#FFD700', '#9ACD32', '#4CAF50']
-                });
-                confetti({
-                    ...defaults,
-                    particleCount,
-                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-                    colors: ['#FF6B35', '#FFA500', '#FFD700', '#9ACD32', '#4CAF50']
-                });
-            }, 250);
+        if (timeLeft <= 0) {
+            return clearInterval(interval);
         }
+
+        const particleCount = 50 * (timeLeft / duration);
+
+        confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+            colors: ['#FF6B35', '#FFA500', '#FFD700', '#9ACD32', '#4CAF50']
+        });
+        confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+            colors: ['#FF6B35', '#FFA500', '#FFD700', '#9ACD32', '#4CAF50']
+        });
+    }, 250);
+}
+
 
         // Get next milestone
         function getNextMilestone(days) {
@@ -598,6 +614,44 @@
         }, 60000);
     </script>
 <script>
+
+// --- PWA Install button ---
+let deferredPrompt = null;
+const installAppBtn = document.getElementById("install-app-btn");
+
+// Lyssna på beforeinstallprompt (Chrome triggar detta när appen är "installbar")
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();          // vi tar kontroll över prompten
+    deferredPrompt = e;
+    if (installAppBtn) {
+        installAppBtn.classList.remove("hidden");
+    }
+});
+
+// Klick på "Install app"
+if (installAppBtn) {
+    installAppBtn.addEventListener("click", async () => {
+        if (!deferredPrompt) return;
+
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+
+        console.log(`User response to install prompt: ${outcome}`);
+        // Göm knappen efter försök
+        deferredPrompt = null;
+        installAppBtn.classList.add("hidden");
+    });
+}
+
+// Om appen redan är installerad (standalone), kan vi gömma knappen helt
+window.addEventListener("appinstalled", () => {
+    console.log("PWA was installed");
+    if (installAppBtn) {
+        installAppBtn.classList.add("hidden");
+    }
+});
+
+
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("./service-worker.js")

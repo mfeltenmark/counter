@@ -1,11 +1,16 @@
-const CACHE_NAME = "counter-cache-v1";
+const CACHE_NAME = "counter-cache-v2"; // bumpa version vid nya releaser
+
+// Bas-resurser som ska finnas offline
 const urlsToCache = [
-  "./",           // roten för appen
+  "./",
   "./index.html",
-  "./manifest.json"
+  "./manifest.json",
+  "./offline.html",
+  "https://cdn.tailwindcss.com",
+  "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"
 ];
 
-// Installera service workern och cacha alla filer
+// Installera service workern och cacha viktiga filer
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -17,7 +22,7 @@ self.addEventListener("install", event => {
   );
 });
 
-// Aktivera service workern direkt och rensa gamla cachar
+// Aktivera service workern och rensa gamla cachar
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -30,21 +35,56 @@ self.addEventListener("activate", event => {
   );
 });
 
-// Fetch-handler för offline-support
+// Fetch-handler: appshell + cache-first för statiska resurser
 self.addEventListener("fetch", event => {
-  // Navigeringsbegäran (sidladdningar)
+  // Hantera sidnavigeringar (HTML)
   if (event.request.mode === "navigate") {
     event.respondWith(
+      // Försök nätet först
       fetch(event.request)
-        .catch(() => caches.match("./index.html"))
+        .then(response => {
+          // Uppdatera index.html i cache med senaste versionen
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put("./index.html", copy);
+          });
+          return response;
+        })
+        .catch(() =>
+          // Om offline: försök index.html från cache,
+          // annars visa offline.html
+          caches.match("./index.html")
+            .then(resp => resp || caches.match("./offline.html"))
+        )
     );
     return;
   }
 
-  // Övriga requests: cache-first
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
-  );
+  // Övriga GET-requests: cache-first, fallback nätet
+  if (event.request.method === "GET") {
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) {
+          return cached;
+        }
+
+        return fetch(event.request)
+          .then(response => {
+            // Lägg nya resurser i cache (t.ex. CDN scripts)
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, copy);
+            });
+            return response;
+          })
+          .catch(() => {
+            // Vid total offline och resurs saknas:
+            // om det är ett dokument → visa offline-sidan
+            if (event.request.destination === "document") {
+              return caches.match("./offline.html");
+            }
+          });
+      })
+    );
+  }
 });
