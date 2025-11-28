@@ -185,6 +185,50 @@
                 </button>
             </div>
 
+            <!-- Edit Counter Modal (hidden by default) -->
+            <div id="edit-section" class="bg-white rounded-3xl p-8 mb-6 glow-card hidden">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        ✏️ Edit Counter
+                    </h2>
+                    <button
+                        id="close-edit-btn"
+                        class="text-gray-400 hover:text-gray-600 text-3xl font-bold leading-none"
+                        title="Close"
+                    >
+                        ×
+                    </button>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">
+                    Update the name or start date. Note: Changing the date will reset achievement notifications. 📝
+                </p>
+                <input type="hidden" id="edit-counter-id">
+                <label for="edit-counter-name" class="block text-sm font-semibold mb-2 text-gray-700">
+                    📝 Counter Name
+                </label>
+                <input
+                    type="text"
+                    id="edit-counter-name"
+                    placeholder="e.g. 'My Journey 2024'"
+                    class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:border-orange-400 transition-colors text-gray-800"
+                >
+                <label for="edit-start-date" class="block text-sm font-semibold mb-2 text-gray-700">
+                    📅 Start Date
+                </label>
+                <input
+                    type="date"
+                    id="edit-start-date"
+                    required
+                    class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 mb-6 focus:outline-none focus:border-orange-400 transition-colors text-gray-800 text-lg"
+                >
+                <button
+                    id="update-counter-btn"
+                    class="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+                >
+                    💾 Save Changes
+                </button>
+            </div>
+
             <!-- Saved Counters -->
 <div class="saved-counters mt-8" id="saved-counters">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
@@ -234,6 +278,67 @@
         const inputSection = document.getElementById('input-section');
         const toggleFormBtn = document.getElementById('toggle-form-btn');
         const closeFormBtn = document.getElementById('close-form-btn');
+        const editSection = document.getElementById('edit-section');
+        const editCounterId = document.getElementById('edit-counter-id');
+        const editCounterName = document.getElementById('edit-counter-name');
+        const editStartDate = document.getElementById('edit-start-date');
+        const updateCounterBtn = document.getElementById('update-counter-btn');
+        const closeEditBtn = document.getElementById('close-edit-btn');
+
+        // Request notification permission on page load
+        async function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                try {
+                    await Notification.requestPermission();
+                } catch (error) {
+                    console.log('Notification permission error:', error);
+                }
+            }
+        }
+
+        // Send achievement notification
+        function sendAchievementNotification(milestone) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const milestoneName = milestoneNames[milestone] || `${milestone} days`;
+                const notification = new Notification('🎉 New Achievement Unlocked!', {
+                    body: `Congratulations! You've reached ${milestoneName}!`,
+                    icon: '/counter/icons/icon-192x192.png',
+                    badge: '/counter/icons/icon-192x192.png',
+                    tag: 'achievement-' + milestone,
+                    requireInteraction: false,
+                    silent: false
+                });
+
+                // Auto-close after 5 seconds
+                setTimeout(() => notification.close(), 5000);
+            }
+        }
+
+        // Get seen achievements for a counter
+        function getSeenAchievements(counterDate) {
+            const seenData = JSON.parse(localStorage.getItem('seenAchievements')) || {};
+            return seenData[counterDate] || [];
+        }
+
+        // Mark achievement as seen
+        function markAchievementAsSeen(counterDate, milestone) {
+            const seenData = JSON.parse(localStorage.getItem('seenAchievements')) || {};
+            if (!seenData[counterDate]) {
+                seenData[counterDate] = [];
+            }
+            if (!seenData[counterDate].includes(milestone)) {
+                seenData[counterDate].push(milestone);
+                localStorage.setItem('seenAchievements', JSON.stringify(seenData));
+            }
+        }
+
+        // Get unseen achievements for a counter
+        function getUnseenAchievements(counterDate) {
+            const days = calculateDays(counterDate);
+            const achieved = getAchievedMilestones(days);
+            const seen = getSeenAchievements(counterDate);
+            return achieved.filter(m => !seen.includes(m));
+        }
 
         // Milestones (in days) - Tätare för bättre känsla av framsteg
         const milestones = [
@@ -449,6 +554,19 @@ function fireConfetti() {
             // Save last used date
             localStorage.setItem('lastUsedDate', startDate);
 
+            // Get current achievements and check for new ones
+            const currentAchievements = getAchievedMilestones(days);
+            const seenAchievements = getSeenAchievements(startDate);
+            const newAchievements = currentAchievements.filter(m => !seenAchievements.includes(m));
+
+            // Send notifications for new achievements
+            if (newAchievements.length > 0) {
+                newAchievements.forEach(milestone => {
+                    sendAchievementNotification(milestone);
+                    markAchievementAsSeen(startDate, milestone);
+                });
+            }
+
             // Check if milestone achieved and fire confetti (only if showConfetti is true)
             if (showConfetti && milestones.includes(days)) {
                 fireConfetti();
@@ -502,6 +620,64 @@ function fireConfetti() {
             renderSavedCounters();
         }
 
+        // Open edit modal
+        function openEditModal(id) {
+            const counter = savedCounters.find(c => c.id === id);
+            if (!counter) return;
+
+            editCounterId.value = counter.id;
+            editCounterName.value = counter.name;
+            editStartDate.value = counter.date;
+
+            editSection.classList.remove('hidden');
+            inputSection.classList.add('hidden');
+            editSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Update counter
+        function updateCounter() {
+            const id = parseInt(editCounterId.value);
+            const newName = editCounterName.value.trim();
+            const newDate = editStartDate.value;
+
+            if (!newDate) {
+                alert('Please select a date');
+                return;
+            }
+
+            const counter = savedCounters.find(c => c.id === id);
+            if (!counter) return;
+
+            const oldDate = counter.date;
+
+            // Update counter
+            counter.name = newName || `My journey from ${formatDate(newDate)}`;
+            counter.date = newDate;
+
+            // If date changed, reset seen achievements for this counter
+            if (oldDate !== newDate) {
+                const seenData = JSON.parse(localStorage.getItem('seenAchievements')) || {};
+                delete seenData[oldDate];
+                localStorage.setItem('seenAchievements', JSON.stringify(seenData));
+            }
+
+            // Save to localStorage
+            localStorage.setItem('counters', JSON.stringify(savedCounters));
+
+            // Update display if this was the active counter
+            const currentLastUsedDate = localStorage.getItem('lastUsedDate');
+            if (oldDate === currentLastUsedDate) {
+                localStorage.setItem('lastUsedDate', newDate);
+                displayResult(newDate, false);
+            }
+
+            // Re-render counters list
+            renderSavedCounters();
+
+            // Close edit modal
+            editSection.classList.add('hidden');
+        }
+
         // Render saved counters
         function renderSavedCounters() {
             if (savedCounters.length === 0) {
@@ -539,12 +715,20 @@ function fireConfetti() {
                                     👆 Click for details
                                 </div>
                             </div>
-                            <button
-                                class="bg-gradient-to-r from-red-400 to-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:scale-105 transition-transform text-sm"
-                                onclick="deleteCounter(${counter.id})"
-                            >
-                                Delete
-                            </button>
+                            <div class="flex flex-col gap-2">
+                                <button
+                                    class="bg-gradient-to-r from-blue-400 to-purple-500 text-white px-4 py-2 rounded-lg font-semibold hover:scale-105 transition-transform text-sm"
+                                    onclick="openEditModal(${counter.id})"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    class="bg-gradient-to-r from-red-400 to-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:scale-105 transition-transform text-sm"
+                                    onclick="deleteCounter(${counter.id})"
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -559,6 +743,16 @@ function fireConfetti() {
 
         closeFormBtn.addEventListener('click', () => {
             inputSection.classList.add('hidden');
+        });
+
+        // Toggle edit form visibility
+        closeEditBtn.addEventListener('click', () => {
+            editSection.classList.add('hidden');
+        });
+
+        // Event listener for update counter button
+        updateCounterBtn.addEventListener('click', () => {
+            updateCounter();
         });
 
         // Event listener for calculate button
@@ -590,8 +784,42 @@ function fireConfetti() {
             }
         });
 
+        // Check for unseen achievements and show confetti
+        function checkUnseenAchievementsOnLoad() {
+            // Request notification permission
+            requestNotificationPermission();
+
+            // Check all counters for unseen achievements
+            savedCounters.forEach(counter => {
+                const unseenAchievements = getUnseenAchievements(counter.date);
+                if (unseenAchievements.length > 0) {
+                    // Only show confetti for the active counter (last used)
+                    if (counter.date === lastUsedDate) {
+                        // Show confetti for unseen achievements
+                        fireConfetti();
+
+                        // Send notifications for all unseen achievements
+                        unseenAchievements.forEach(milestone => {
+                            sendAchievementNotification(milestone);
+                            markAchievementAsSeen(counter.date, milestone);
+                        });
+                    } else {
+                        // For non-active counters, just send notifications
+                        unseenAchievements.forEach(milestone => {
+                            sendAchievementNotification(milestone);
+                            markAchievementAsSeen(counter.date, milestone);
+                        });
+                    }
+                }
+            });
+        }
+
         // Initial render of saved counters
         renderSavedCounters();
+
+        // Check for unseen achievements BEFORE displaying the counter
+        // This ensures confetti shows even if days have passed
+        checkUnseenAchievementsOnLoad();
 
         // Auto-load result if there's a saved date (without confetti or scrolling)
         if (lastUsedDate) {
