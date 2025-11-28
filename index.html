@@ -225,6 +225,61 @@
         const toggleFormBtn = document.getElementById('toggle-form-btn');
         const closeFormBtn = document.getElementById('close-form-btn');
 
+        // Request notification permission on page load
+        async function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                try {
+                    await Notification.requestPermission();
+                } catch (error) {
+                    console.log('Notification permission error:', error);
+                }
+            }
+        }
+
+        // Send achievement notification
+        function sendAchievementNotification(milestone) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const milestoneName = milestoneNames[milestone] || `${milestone} days`;
+                const notification = new Notification('🎉 New Achievement Unlocked!', {
+                    body: `Congratulations! You've reached ${milestoneName}!`,
+                    icon: '/counter/icons/icon-192x192.png',
+                    badge: '/counter/icons/icon-192x192.png',
+                    tag: 'achievement-' + milestone,
+                    requireInteraction: false,
+                    silent: false
+                });
+
+                // Auto-close after 5 seconds
+                setTimeout(() => notification.close(), 5000);
+            }
+        }
+
+        // Get seen achievements for a counter
+        function getSeenAchievements(counterDate) {
+            const seenData = JSON.parse(localStorage.getItem('seenAchievements')) || {};
+            return seenData[counterDate] || [];
+        }
+
+        // Mark achievement as seen
+        function markAchievementAsSeen(counterDate, milestone) {
+            const seenData = JSON.parse(localStorage.getItem('seenAchievements')) || {};
+            if (!seenData[counterDate]) {
+                seenData[counterDate] = [];
+            }
+            if (!seenData[counterDate].includes(milestone)) {
+                seenData[counterDate].push(milestone);
+                localStorage.setItem('seenAchievements', JSON.stringify(seenData));
+            }
+        }
+
+        // Get unseen achievements for a counter
+        function getUnseenAchievements(counterDate) {
+            const days = calculateDays(counterDate);
+            const achieved = getAchievedMilestones(days);
+            const seen = getSeenAchievements(counterDate);
+            return achieved.filter(m => !seen.includes(m));
+        }
+
         // Milestones (in days) - Tätare för bättre känsla av framsteg
         const milestones = [
             1,      // 1 dag
@@ -433,6 +488,19 @@
             // Save last used date
             localStorage.setItem('lastUsedDate', startDate);
 
+            // Get current achievements and check for new ones
+            const currentAchievements = getAchievedMilestones(days);
+            const seenAchievements = getSeenAchievements(startDate);
+            const newAchievements = currentAchievements.filter(m => !seenAchievements.includes(m));
+
+            // Send notifications for new achievements
+            if (newAchievements.length > 0) {
+                newAchievements.forEach(milestone => {
+                    sendAchievementNotification(milestone);
+                    markAchievementAsSeen(startDate, milestone);
+                });
+            }
+
             // Check if milestone achieved and fire confetti (only if showConfetti is true)
             if (showConfetti && milestones.includes(days)) {
                 fireConfetti();
@@ -574,8 +642,42 @@
             }
         });
 
+        // Check for unseen achievements and show confetti
+        function checkUnseenAchievementsOnLoad() {
+            // Request notification permission
+            requestNotificationPermission();
+
+            // Check all counters for unseen achievements
+            savedCounters.forEach(counter => {
+                const unseenAchievements = getUnseenAchievements(counter.date);
+                if (unseenAchievements.length > 0) {
+                    // Only show confetti for the active counter (last used)
+                    if (counter.date === lastUsedDate) {
+                        // Show confetti for unseen achievements
+                        fireConfetti();
+
+                        // Send notifications for all unseen achievements
+                        unseenAchievements.forEach(milestone => {
+                            sendAchievementNotification(milestone);
+                            markAchievementAsSeen(counter.date, milestone);
+                        });
+                    } else {
+                        // For non-active counters, just send notifications
+                        unseenAchievements.forEach(milestone => {
+                            sendAchievementNotification(milestone);
+                            markAchievementAsSeen(counter.date, milestone);
+                        });
+                    }
+                }
+            });
+        }
+
         // Initial render of saved counters
         renderSavedCounters();
+
+        // Check for unseen achievements BEFORE displaying the counter
+        // This ensures confetti shows even if days have passed
+        checkUnseenAchievementsOnLoad();
 
         // Auto-load result if there's a saved date (without confetti or scrolling)
         if (lastUsedDate) {
