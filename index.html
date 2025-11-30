@@ -73,6 +73,20 @@
             50% { opacity: 0.5; transform: scale(1.2); }
         }
     </style>
+
+    <!-- 🧹 TEMPORARY CLEANUP - Ta bort efter nästa deploy! -->
+    <script>
+      (async function() {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map(reg => reg.unregister()));
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map(name => caches.delete(name)));
+          console.log('🧹 Caches cleared');
+        }
+      })();
+    </script>
+
 </head>
 <body class="gradient-bg min-h-screen">
     <!-- Main container -->
@@ -532,14 +546,19 @@
         }, 60000);
     </script>
 
-    <!-- Enkel SW-registrering, som när det funkade -->
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker.register("./service-worker.js")
-            .catch(err => console.log("SW registration failed:", err));
-        });
+<!-- Ersätt din gamla SW-registrering med denna: -->
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", async () => {
+      try {
+        const registration = await navigator.serviceWorker.register("./service-worker.js");
+        registration.update(); // Kolla efter uppdateringar direkt
+        console.log('✅ SW v3 registered');
+      } catch (err) {
+        console.error("❌ SW failed:", err);
       }
-    </script>
+    });
+  }
+</script>
 </body>
 </html>
